@@ -24,10 +24,17 @@ import {
   Calendar,
   Hourglass,
   Clock,
-  Sparkles
+  Sparkles,
+  Cloud,
+  Server,
+  Database,
+  Lock,
+  Zap,
+  ArrowRight
 } from 'lucide-react';
 import { CertificateData, SessionActivity } from '../types.ts';
 import { getCertificateExpiryInfo } from '../utils/certificateStorage.ts';
+import { getApiBaseUrl } from '../config.ts';
 
 interface DashboardSectionProps {
   trackedCertificates: CertificateData[];
@@ -40,6 +47,7 @@ interface DashboardSectionProps {
   onClearActivities: () => void;
   tableDensity: 'comfortable' | 'compact';
   onToggleDensity: () => void;
+  onOpenArchitecture?: () => void;
 }
 
 export const DashboardSection: React.FC<DashboardSectionProps> = ({
@@ -52,7 +60,8 @@ export const DashboardSection: React.FC<DashboardSectionProps> = ({
   onClearTracked,
   onClearActivities,
   tableDensity,
-  onToggleDensity
+  onToggleDensity,
+  onOpenArchitecture
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'VALID' | 'REVOKED' | 'EXPIRED'>('ALL');
@@ -157,37 +166,145 @@ export const DashboardSection: React.FC<DashboardSectionProps> = ({
   return (
     <div className="space-y-8 pb-16">
       
-      {/* Dashboard Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
-        <div className="space-y-1">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 border border-blue-200/80 rounded-full text-blue-700 text-xs font-bold uppercase tracking-wider">
-            <LayoutDashboard className="w-3.5 h-3.5" />
-            <span>Operational Console</span>
+      {/* 1. System Overview Section at Top of Dashboard */}
+      <section className="rounded-3xl bg-gradient-to-b from-blue-50/90 via-white to-slate-50 border border-blue-100 p-6 sm:p-8 shadow-xs relative overflow-hidden space-y-6">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-2 border-b border-blue-100/80">
+          <div className="space-y-1.5">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-100/80 border border-blue-200 rounded-full text-blue-900 text-xs font-bold shadow-2xs">
+              <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+              <span>System Overview</span>
+              <span className="text-blue-300">|</span>
+              <span className="text-blue-700">AWS ap-south-1</span>
+            </div>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                CertiVerify
+              </h1>
+              <p className="text-xs sm:text-sm font-semibold text-blue-700 mt-0.5">
+                Certificate Issuance and Authentication Platform
+              </p>
+            </div>
+            <p className="text-xs sm:text-sm text-slate-600 max-w-2xl leading-relaxed">
+              Cloud-native academic credential authentication powered by Amazon API Gateway, AWS Lambda compute, and Amazon DynamoDB storage.
+            </p>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-            CIAP Credential Dashboard
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-500">
-            Real-time status overview of certificates authenticated against Amazon DynamoDB in region ap-south-1.
-          </p>
+
+          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+            <button
+              onClick={() => onNavigateToTab('verify')}
+              className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold rounded-xl shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
+            >
+              <Search className="w-4 h-4" />
+              <span>Verify Certificate</span>
+            </button>
+            <button
+              onClick={() => onNavigateToTab('register')}
+              className="px-4 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-xl shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer"
+            >
+              <PlusCircle className="w-4 h-4 text-blue-600" />
+              <span>Issue New</span>
+            </button>
+            {onOpenArchitecture && (
+              <button
+                onClick={onOpenArchitecture}
+                className="px-3.5 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+              >
+                <Server className="w-3.5 h-3.5" />
+                <span>Architecture</span>
+              </button>
+            )}
+          </div>
         </div>
 
-        {/* Quick action buttons */}
-        <div className="flex items-center gap-2.5 shrink-0">
-          <button
-            onClick={() => onNavigateToTab('register')}
-            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold rounded-xl shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
-          >
-            <PlusCircle className="w-4 h-4" />
-            <span>Issue New</span>
-          </button>
-          <button
-            onClick={() => onNavigateToTab('verify')}
-            className="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-xl shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer"
-          >
-            <Search className="w-4 h-4 text-blue-600" />
-            <span>Verify Portal</span>
-          </button>
+        {/* 4 AWS Services Architecture Overview Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+          {/* S3 */}
+          <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2 group hover:border-amber-300 transition-all">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold text-amber-700 uppercase tracking-wider">Layer 1 · Hosting</span>
+              <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+                <Cloud className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="text-sm font-bold text-slate-900">Amazon S3</div>
+            <p className="text-[11px] text-slate-500 leading-tight">
+              Static website distribution for high availability and low cost.
+            </p>
+          </div>
+
+          {/* API Gateway */}
+          <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2 group hover:border-purple-300 transition-all">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold text-purple-700 uppercase tracking-wider">Layer 2 · Gateway</span>
+              <div className="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+                <Server className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="text-sm font-bold text-slate-900">API Gateway</div>
+            <p className="text-[11px] text-slate-500 leading-tight">
+              HTTP API (v2) routes GET /verify, POST /register, POST /revoke.
+            </p>
+          </div>
+
+          {/* Lambda */}
+          <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2 group hover:border-orange-300 transition-all">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold text-orange-700 uppercase tracking-wider">Layer 3 · Compute</span>
+              <div className="w-7 h-7 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
+                <Zap className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="text-sm font-bold text-slate-900">AWS Lambda</div>
+            <p className="text-[11px] text-slate-500 leading-tight">
+              CertificateVerificationAPI handles business rules & auth.
+            </p>
+          </div>
+
+          {/* DynamoDB */}
+          <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2 group hover:border-blue-300 transition-all">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold text-blue-700 uppercase tracking-wider">Layer 4 · Storage</span>
+              <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                <Database className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="text-sm font-bold text-slate-900">Amazon DynamoDB</div>
+            <p className="text-[11px] text-slate-500 leading-tight">
+              CertificateRecords table stores authoritative partition records.
+            </p>
+          </div>
+        </div>
+
+        {/* Live AWS Connection & Operational Specs Ribbon */}
+        <div className="pt-3 border-t border-blue-100 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600">
+          <div className="flex items-center gap-2 font-mono text-[11px]">
+            <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span className="font-bold text-slate-800">Endpoint:</span>
+            <span className="text-slate-600 truncate max-w-xs sm:max-w-md">{getApiBaseUrl()}</span>
+          </div>
+          <div className="flex items-center gap-4 text-[11px] font-semibold text-slate-500">
+            <span className="flex items-center gap-1"><Lock className="w-3.5 h-3.5 text-emerald-600" /> Zero Fake Records</span>
+            <span>·</span>
+            <span>&lt; 150ms Query Latency</span>
+            <span>·</span>
+            <span className="text-blue-700 font-bold">100% Serverless</span>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. Operational Console & Metric Cards Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
+        <div className="space-y-1">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 border border-slate-200 rounded-full text-slate-700 text-xs font-bold uppercase tracking-wider">
+            <LayoutDashboard className="w-3.5 h-3.5 text-blue-600" />
+            <span>Operational Console</span>
+          </div>
+          <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+            Active Credential Registry
+          </h2>
+          <p className="text-xs text-slate-500">
+            Real-time status metrics of certificates authenticated against DynamoDB table CertificateRecords.
+          </p>
         </div>
       </div>
 

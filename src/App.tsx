@@ -29,7 +29,7 @@ import {
 } from './utils/certificateStorage.ts';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'home' | 'dashboard' | 'verify' | 'register' | 'revoke'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'home' | 'dashboard' | 'verify' | 'register' | 'revoke'>('home');
   const [targetCertId, setTargetCertId] = useState<string>('');
   
   // Tracked genuine certificates in session
@@ -245,6 +245,7 @@ export default function App() {
               onClearActivities={handleClearActivities}
               tableDensity={tableDensity}
               onToggleDensity={() => setTableDensity((prev) => prev === 'comfortable' ? 'compact' : 'comfortable')}
+              onOpenArchitecture={() => setIsArchitectureOpen(true)}
             />
           )}
 
@@ -285,8 +286,8 @@ export default function App() {
         <footer className="bg-white border-t border-slate-200/90 py-8 mt-auto no-print">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 text-center sm:text-left">
             <div>
-              <span className="font-extrabold text-slate-900">CIAP · CertiVerify</span>
-              <span className="text-slate-400 ml-2">Amazon Web Services (S3, API Gateway, Lambda, DynamoDB)</span>
+              <span className="font-extrabold text-slate-900">CertiVerify</span>
+              <span className="text-slate-500 block sm:inline sm:ml-2">Certificate Issuance and Authentication Platform · AWS (S3, API Gateway, Lambda, DynamoDB)</span>
             </div>
             <div className="flex items-center gap-4">
               <button

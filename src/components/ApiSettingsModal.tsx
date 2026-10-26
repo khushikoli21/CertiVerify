@@ -111,10 +111,10 @@ export const ApiSettingsModal: React.FC<ApiSettingsModalProps> = ({
             </div>
             <div>
               <h2 className="text-lg font-bold text-slate-900">
-                CIAP Settings & Preferences
+                CertiVerify Settings & Preferences
               </h2>
               <p className="text-xs text-slate-500">
-                AWS API Gateway routing, S3 domain & display preferences
+                Certificate Issuance and Authentication Platform · AWS Endpoints
               </p>
             </div>
           </div>

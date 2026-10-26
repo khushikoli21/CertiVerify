@@ -43,7 +43,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       case 'home':
         return 'Overview / System Architecture';
       default:
-        return 'CIAP Platform';
+        return 'CertiVerify';
     }
   };
 
@@ -53,20 +53,23 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center justify-between h-16 gap-4">
           
           {/* Left Zone: Mobile Menu Toggle + Breadcrumbs */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 min-w-0">
             <button
               onClick={onOpenMobileSidebar}
-              className="lg:hidden p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
+              className="lg:hidden p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer shrink-0"
               title="Open Navigation Menu"
             >
               <Menu className="w-5 h-5" />
             </button>
 
-            {/* Desktop Brand / Breadcrumbs */}
-            <div className="flex items-center gap-2">
-              <span className="font-extrabold text-slate-900 text-sm hidden sm:inline">CIAP</span>
+            {/* Desktop Brand / Subtitle / Breadcrumbs */}
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="hidden sm:flex flex-col">
+                <span className="font-extrabold text-slate-900 text-sm leading-tight tracking-tight">CertiVerify</span>
+                <span className="text-[9px] font-semibold text-slate-400 leading-none">Certificate Issuance and Authentication Platform</span>
+              </div>
               <span className="text-slate-300 hidden sm:inline">/</span>
-              <span className="text-xs font-semibold text-slate-600 truncate max-w-[200px] sm:max-w-xs">
+              <span className="text-xs font-semibold text-slate-600 truncate max-w-[180px] sm:max-w-xs">
                 {getBreadcrumb()}
               </span>
             </div>

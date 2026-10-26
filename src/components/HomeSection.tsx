@@ -52,11 +52,13 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
         <div className="relative max-w-4xl mx-auto px-6 text-center space-y-7">
           
           {/* Microproject Header Tag */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-blue-100/80 border border-blue-200/80 rounded-full text-blue-900 text-xs font-semibold shadow-2xs">
+          <div className="inline-flex flex-wrap items-center justify-center gap-2 px-4 py-1.5 bg-blue-100/80 border border-blue-200/80 rounded-full text-blue-900 text-xs font-semibold shadow-2xs">
             <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
-            <span>AWS Cloud Computing Microproject</span>
-            <span className="text-blue-300">|</span>
-            <span className="text-blue-700">Region ap-south-1</span>
+            <span className="font-bold">CertiVerify</span>
+            <span className="text-blue-300">·</span>
+            <span>Certificate Issuance and Authentication Platform</span>
+            <span className="text-blue-300 hidden sm:inline">|</span>
+            <span className="text-blue-700 hidden sm:inline">AWS ap-south-1</span>
           </div>
 
           {/* Headline */}
@@ -68,7 +70,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
           </h1>
 
           <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed text-balance">
-            CertiVerify provides instant, cryptographic academic credential verification 
+            <strong>CertiVerify</strong> (Certificate Issuance and Authentication Platform) provides instant, cryptographic academic credential verification 
             using Amazon API Gateway, AWS Lambda compute, and Amazon DynamoDB storage.
           </p>
 

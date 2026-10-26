@@ -36,6 +36,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const navItems = [
     {
+      id: 'home' as const,
+      label: 'System Overview',
+      icon: ShieldCheck
+    },
+    {
       id: 'dashboard' as const,
       label: 'Dashboard',
       icon: LayoutDashboard,
@@ -55,11 +60,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
       id: 'revoke' as const,
       label: 'Revoke (Admin)',
       icon: Ban
-    },
-    {
-      id: 'home' as const,
-      label: 'System Overview',
-      icon: ShieldCheck
     }
   ];
 
@@ -89,23 +89,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Top Header / Brand Crest */}
         <div className="p-5 border-b border-slate-100 flex items-center justify-between">
           <button
-            onClick={() => handleNavClick('dashboard')}
-            className="flex items-center gap-3 text-left group focus:outline-none"
+            onClick={() => handleNavClick('home')}
+            className="flex items-start gap-3 text-left group focus:outline-none w-full cursor-pointer"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900 flex items-center justify-center text-white shadow-md shadow-blue-600/20 group-hover:scale-105 transition-all">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900 flex items-center justify-center text-white shadow-md shadow-blue-600/20 group-hover:scale-105 transition-all shrink-0 mt-0.5">
               <ShieldCheck className="w-6 h-6" />
             </div>
-            <div>
+            <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
                 <span className="text-lg font-black tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors">
-                  CIAP
+                  CertiVerify
                 </span>
                 <span className="text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
                   AWS
                 </span>
               </div>
-              <span className="text-[11px] font-medium text-slate-500 block -mt-0.5">
-                CertiVerify Platform
+              <span className="text-[10px] font-semibold text-slate-500 block leading-tight mt-0.5 tracking-tight">
+                Certificate Issuance and Authentication Platform
               </span>
             </div>
           </button>
@@ -204,7 +204,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
 
           <div className="text-[10px] text-slate-400 text-center">
-            CIAP Microproject · Naresh Karothia
+            CertiVerify · Naresh Karothia
           </div>
         </div>
       </aside>
