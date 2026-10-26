@@ -20,7 +20,7 @@ import { getApiBaseUrl } from '../config.ts';
 
 interface HomeSectionProps {
   onVerifySearch: (id: string) => void;
-  onNavigateToTab: (tab: 'home' | 'verify' | 'register' | 'revoke') => void;
+  onNavigateToTab: (tab: 'home' | 'dashboard' | 'verify' | 'register' | 'revoke') => void;
   onOpenArchitecture: () => void;
 }
 

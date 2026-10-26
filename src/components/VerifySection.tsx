@@ -29,12 +29,14 @@ import { getVerificationUrl, generateQrDataUrl } from '../utils/qr.ts';
 
 interface VerifySectionProps {
   initialCertificateId?: string;
-  onNavigateToTab: (tab: 'home' | 'verify' | 'register' | 'revoke') => void;
+  onNavigateToTab: (tab: 'home' | 'dashboard' | 'verify' | 'register' | 'revoke') => void;
+  onCertificateVerified?: (cert: CertificateData) => void;
 }
 
 export const VerifySection: React.FC<VerifySectionProps> = ({
   initialCertificateId = '',
-  onNavigateToTab
+  onNavigateToTab,
+  onCertificateVerified
 }) => {
   const [certId, setCertId] = useState(initialCertificateId);
   const [status, setStatus] = useState<VerificationStatus>('IDLE');
@@ -93,13 +95,20 @@ export const VerifySection: React.FC<VerifySectionProps> = ({
       });
     } else if (res.status === 'REVOKED') {
       setStatus('REVOKED');
-      setResult(res.certificate || {
+      const cert = res.certificate || {
         certificateId: targetId,
         status: 'REVOKED'
-      });
+      };
+      setResult(cert);
+      if (onCertificateVerified) {
+        onCertificateVerified(cert);
+      }
     } else {
       setStatus('VALID');
       setResult(res.certificate || null);
+      if (res.certificate && onCertificateVerified) {
+        onCertificateVerified(res.certificate);
+      }
 
       // Generate embedded QR code for the valid certificate card
       if (res.certificate?.certificateId) {

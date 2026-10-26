@@ -262,6 +262,7 @@ export async function verifyCertificate(certificateId: string): Promise<VerifyAp
       course: (data.course as string) || (data.courseName as string) || (data.program as string),
       institution: (data.institution as string) || (data.issuer as string) || (data.university as string),
       issueDate: (data.issueDate as string) || (data.issue_date as string) || (data.date as string),
+      expiryDate: (data.expiryDate as string) || (data.expiry_date as string) || (data.expirationDate as string) || (data.validUntil as string),
       status: statusStr,
       revokedAt: (data.revokedAt as string) || (data.revoked_at as string) || (data.revocationDate as string),
       revocationReason: (data.revocationReason as string) || (data.reason as string),
@@ -296,6 +297,7 @@ export async function registerCertificate(payload: {
   course: string;
   institution: string;
   issueDate: string;
+  expiryDate?: string;
   certificateId?: string;
   adminKey?: string;
 }): Promise<RegisterApiResponse> {
@@ -306,6 +308,7 @@ export async function registerCertificate(payload: {
   const trimmedCourse = payload.course.trim();
   const trimmedInstitution = payload.institution.trim();
   const trimmedDate = payload.issueDate.trim();
+  const trimmedExpiry = payload.expiryDate ? payload.expiryDate.trim() : '';
   const trimmedCustomId = payload.certificateId ? payload.certificateId.trim() : '';
 
   // Request payload providing all standard property formats
@@ -328,6 +331,11 @@ export async function registerCertificate(payload: {
     Institution: trimmedInstitution,
     IssueDate: trimmedDate
   };
+
+  if (trimmedExpiry) {
+    requestBody.expiryDate = trimmedExpiry;
+    requestBody.expiry_date = trimmedExpiry;
+  }
 
   // If a custom certificate ID was provided by administrator, send it
   if (trimmedCustomId) {

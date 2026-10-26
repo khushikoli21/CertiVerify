@@ -8,7 +8,10 @@ import {
   AlertCircle, 
   Loader2, 
   RefreshCw,
-  QrCode
+  SlidersHorizontal,
+  Trash2,
+  Sliders,
+  Check
 } from 'lucide-react';
 import { DEFAULT_API_BASE_URL, DEFAULT_S3_WEBSITE_URL, getApiBaseUrl, getS3WebsiteUrl } from '../config.ts';
 
@@ -16,12 +19,20 @@ interface ApiSettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfigUpdated: () => void;
+  tableDensity: 'comfortable' | 'compact';
+  onToggleDensity: () => void;
+  trackedCount: number;
+  onClearTracked: () => void;
 }
 
 export const ApiSettingsModal: React.FC<ApiSettingsModalProps> = ({
   isOpen,
   onClose,
-  onConfigUpdated
+  onConfigUpdated,
+  tableDensity,
+  onToggleDensity,
+  trackedCount,
+  onClearTracked
 }) => {
   const [apiUrl, setApiUrl] = useState(() => getApiBaseUrl());
   const [s3Url, setS3Url] = useState(() => getS3WebsiteUrl());
@@ -46,11 +57,10 @@ export const ApiSettingsModal: React.FC<ApiSettingsModalProps> = ({
         headers: { 'Accept': 'application/json' }
       });
 
-      // Whether it's 200 or 404, if fetch succeeds, API Gateway and CORS are active!
       setTestResult({
         success: true,
         status: res.status,
-        message: `Connected successfully! AWS API Gateway responded with HTTP ${res.status}. CORS headers are accepted.`
+        message: `Connected successfully! AWS API Gateway responded with HTTP ${res.status}. CORS headers accepted.`
       });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -90,8 +100,8 @@ export const ApiSettingsModal: React.FC<ApiSettingsModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">
-      <div className="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 space-y-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 overflow-y-auto no-print">
+      <div className="bg-white rounded-3xl max-w-xl w-full my-6 p-6 sm:p-8 shadow-2xl border border-slate-200 space-y-6 max-h-[90vh] overflow-y-auto">
         
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-100">
@@ -101,19 +111,46 @@ export const ApiSettingsModal: React.FC<ApiSettingsModalProps> = ({
             </div>
             <div>
               <h2 className="text-lg font-bold text-slate-900">
-                AWS Connection & S3 Settings
+                CIAP Settings & Preferences
               </h2>
               <p className="text-xs text-slate-500">
-                Configure API Gateway Invoke URL and S3 hosting domain
+                AWS API Gateway routing, S3 domain & display preferences
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition-colors"
+            className="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
+        </div>
+
+        {/* UI Display Preferences */}
+        <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-900 uppercase tracking-wider">UI Table Density</span>
+            <button
+              onClick={onToggleDensity}
+              className="px-3 py-1 bg-white border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors flex items-center gap-1.5 cursor-pointer"
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5" />
+              <span>Current: {tableDensity === 'comfortable' ? 'Comfortable (48px)' : 'Compact (36px)'}</span>
+            </button>
+          </div>
+
+          <div className="flex items-center justify-between pt-2 border-t border-slate-200/60 text-xs text-slate-600">
+            <span>Tracked Certificates in Session: <strong>{trackedCount}</strong></span>
+            {trackedCount > 0 && (
+              <button
+                onClick={onClearTracked}
+                className="text-rose-600 hover:text-rose-800 text-[11px] font-semibold flex items-center gap-1 cursor-pointer"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Clear Tracked Records</span>
+              </button>
+            )}
+          </div>
         </div>
 
         {/* API Gateway Invoke URL Input */}
@@ -123,7 +160,7 @@ export const ApiSettingsModal: React.FC<ApiSettingsModalProps> = ({
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-              <Server className="w-4 h-4" />
+              <Server className="w-4 h-4 text-blue-600" />
             </div>
             <input
               type="text"
@@ -134,15 +171,15 @@ export const ApiSettingsModal: React.FC<ApiSettingsModalProps> = ({
             />
           </div>
           <div className="flex items-center justify-between text-[11px] text-slate-500">
-            <span>Defined in <code className="font-mono text-slate-700">src/config.ts</code></span>
+            <span>Constant: <code className="font-mono text-slate-700">DEFAULT_API_BASE_URL</code></span>
             <button
               type="button"
               onClick={handleTestConnection}
               disabled={testing}
-              className="text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1"
+              className="text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1 cursor-pointer"
             >
               {testing ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
-              <span>Test Connection</span>
+              <span>Test Connectivity</span>
             </button>
           </div>
         </div>
@@ -175,7 +212,7 @@ export const ApiSettingsModal: React.FC<ApiSettingsModalProps> = ({
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-              <Globe className="w-4 h-4" />
+              <Globe className="w-4 h-4 text-amber-600" />
             </div>
             <input
               type="text"
@@ -186,7 +223,7 @@ export const ApiSettingsModal: React.FC<ApiSettingsModalProps> = ({
             />
           </div>
           <p className="text-[11px] text-slate-500 leading-relaxed">
-            Used as the target URL when generating QR codes: <code className="font-mono text-slate-700">{"{S3_WEBSITE_URL}/?id=CERTIFICATE_ID"}</code>.
+            Encodes the public verification link in QR codes: <code className="font-mono text-slate-700">{"{S3_WEBSITE_URL}/?id=CERTIFICATE_ID"}</code>.
           </p>
         </div>
 
@@ -195,7 +232,7 @@ export const ApiSettingsModal: React.FC<ApiSettingsModalProps> = ({
           <button
             type="button"
             onClick={handleResetDefaults}
-            className="text-xs text-slate-500 hover:text-slate-800"
+            className="text-xs text-slate-500 hover:text-slate-800 cursor-pointer"
           >
             Reset to Defaults
           </button>
@@ -203,16 +240,16 @@ export const ApiSettingsModal: React.FC<ApiSettingsModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition-colors"
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="button"
               onClick={handleSave}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold transition-colors"
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold transition-colors cursor-pointer shadow-sm"
             >
-              Save Configuration
+              Save Preferences
             </button>
           </div>
         </div>

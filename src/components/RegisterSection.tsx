@@ -26,8 +26,10 @@ import {
 import { registerCertificate, RegisterApiResponse } from '../services/api.ts';
 import { generateQrDataUrl, downloadQrCode, getVerificationUrl } from '../utils/qr.ts';
 
+import { CertificateData } from '../types.ts';
+
 interface RegisterSectionProps {
-  onCertificateRegistered?: (certificateId: string) => void;
+  onCertificateRegistered?: (certificateId: string, certData?: Partial<CertificateData>) => void;
   onNavigateToVerify: (certificateId: string) => void;
 }
 
@@ -40,6 +42,7 @@ export const RegisterSection: React.FC<RegisterSectionProps> = ({
   const [course, setCourse] = useState('');
   const [institution, setInstitution] = useState('');
   const [issueDate, setIssueDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [expiryDate, setExpiryDate] = useState('');
   const [customCertId, setCustomCertId] = useState('');
   
   // Administrator Key (volatile in-memory state only, never persisted)
@@ -76,6 +79,7 @@ export const RegisterSection: React.FC<RegisterSectionProps> = ({
       course,
       institution,
       issueDate,
+      expiryDate: expiryDate.trim() || undefined,
       certificateId: customCertId.trim() || undefined,
       adminKey: adminKey.trim() || undefined
     });
@@ -97,7 +101,13 @@ export const RegisterSection: React.FC<RegisterSectionProps> = ({
 
     // Notify parent if needed
     if (onCertificateRegistered) {
-      onCertificateRegistered(certId);
+      onCertificateRegistered(certId, {
+        studentName,
+        course,
+        institution,
+        issueDate,
+        expiryDate: expiryDate.trim() || undefined
+      });
     }
 
     // Generate browser-side QR code linking to deployed website with ?id=CERTIFICATE_ID

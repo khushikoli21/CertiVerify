@@ -17,10 +17,12 @@ import { revokeCertificate, RevokeApiResponse } from '../services/api.ts';
 
 interface RevokeSectionProps {
   onNavigateToVerify: (certificateId: string) => void;
+  onCertificateRevoked?: (certificateId: string) => void;
 }
 
 export const RevokeSection: React.FC<RevokeSectionProps> = ({
-  onNavigateToVerify
+  onNavigateToVerify,
+  onCertificateRevoked
 }) => {
   const [certificateId, setCertificateId] = useState('');
   const [adminKey, setAdminKey] = useState('');
@@ -68,6 +70,10 @@ export const RevokeSection: React.FC<RevokeSectionProps> = ({
     setRevokedId(certificateId.trim());
     setSuccessMessage(res.message || `Certificate ${certificateId.trim()} was successfully marked as REVOKED in AWS DynamoDB.`);
     setRawResponse(res.rawResponse || null);
+
+    if (onCertificateRevoked) {
+      onCertificateRevoked(certificateId.trim());
+    }
   };
 
   const handleReset = () => {
