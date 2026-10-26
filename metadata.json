@@ -1,0 +1,6 @@
+{
+  "name": "CertiVerify - AWS Digital Certificate Verification System",
+  "description": "Secure, cloud-native digital certificate verification, issuance, and revocation system powered by Amazon API Gateway, AWS Lambda, and Amazon DynamoDB.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
